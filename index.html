@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ceylon Trails - Sri Lanka Travel Planner</title>
+    <!-- Google Maps API with Extended Component Library -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhwSeXN84puwKvKrg6bbW-c4h6JWAFb9Q&libraries=places,marker&loading=async&callback=initMap"></script>
+    <script>
+      // Initialize callback function
+      window.initMap = function() {
+        // Import and define Extended Component Library
+        import('https://unpkg.com/@googlemaps/extended-component-library@^0.6').then(() => {
+          console.log('Extended Component Library loaded successfully');
+          window.extendedComponentsReady = true;
+        }).catch(error => {
+          console.error('Failed to load Extended Component Library:', error);
+          window.extendedComponentsError = error;
+        });
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
