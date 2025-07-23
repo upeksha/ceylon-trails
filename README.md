@@ -1,130 +1,64 @@
-# 🇱🇰 Ceylon Trails - Sri Lanka Travel Planner
+# 🌴 Ceylon Trails
+**Interactive Travel Planner for Sri Lanka**
 
-A comprehensive interactive travel planner for exploring Sri Lanka's cultural heritage, restaurants, eco lodges, wellness retreats, train stations, and pristine beaches.
+A modern, responsive web application built with React.js for planning and visualizing travel itineraries across the beautiful island of Sri Lanka. Features real-time route planning, interactive maps, and a comprehensive database of tourist attractions.
+
+![Ceylon Trails Preview](https://img.shields.io/badge/Status-Phase%203%20Complete-brightgreen)
+![React](https://img.shields.io/badge/React-19.1.0-blue)
+![Vite](https://img.shields.io/badge/Vite-6.0.5-646CFF)
+![Google Maps](https://img.shields.io/badge/Google%20Maps-API-red)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.4.17-38B2AC)
 
 ## ✨ Features
 
 ### 🗺️ **Interactive Map Experience**
-- **Google Maps Integration** with custom markers for different place categories
-- **Color-coded markers** with category icons (🏛️ Heritage, 🍽️ Restaurants, 🌿 Eco Lodges, etc.)
-- **Responsive design** optimized for both desktop and mobile devices
-- **Real-time marker updates** based on active filters
+- **Responsive Google Maps** centered on Sri Lanka
+- **Custom category markers** for different attraction types
+- **Real-time place details** powered by Google Places API
+- **Mobile-optimized** responsive design
 
-### 🔍 **Advanced Filtering & Search**
-- **Category-based filtering** with visual checkboxes for all place types
-- **Smart search functionality** - search by place name or description
-- **Combined filtering** - search and category filters work together
-- **Real-time results** with live place count updates
-- **All categories selected by default** for complete overview
-- **Clear filters** functionality to reset selections
+### 🎯 **Smart Filtering & Search**
+- **Category-based filtering** (Heritage, Restaurants, Wellness, Eco, Train Stations, Beaches)
+- **Dynamic text search** across place names and descriptions
+- **Real-time results** with visual feedback
+- **Fallback messaging** for no results
 
-### 📱 **Comprehensive Place Details**
-- **Rich place information** powered by Google Places API with intelligent fallbacks
-- **Multi-source data loading**: Google Places API → Text Search → Basic Info
-- **Enhanced contact details** with copy-to-clipboard functionality:
-  - Plus Codes (Google's location system)
-  - Precise coordinates (6 decimal places)
-  - International phone numbers with click-to-call
-  - Direct website links
-- **Visual content**: Photo galleries with horizontal scrolling
-- **Service & amenity badges**: Dine In, Takeout, Delivery, Vegetarian, Accessibility
-- **Pricing information**: $ to $$$$ price levels
-- **Real-time status**: Open/Closed with full weekly schedules
-- **Recent reviews** with star ratings and user comments
-- **Editorial summaries** and detailed place categories
+### 📱 **Rich Place Details Panel**
+- **Enhanced place information** with photos, ratings, and reviews
+- **Multiple data sources** with intelligent fallback (Google Places API → Text Search → Basic Info)
+- **Contact information** with one-click actions (call, website, directions)
+- **Copy-to-clipboard** functionality for addresses and coordinates
+- **Accessibility features** and service amenities display
 
-### 📋 **Smart Itinerary Management**
-- **Add places to itinerary** with duplicate prevention
-- **Visual feedback** with "Added ✓" confirmation
-- **Toast notifications** for user actions
-- **Itinerary counter** showing selected places count
-- **Persistent state** throughout the session
+### 📋 **Advanced Itinerary Builder**
+- **Drag-and-drop reordering** using dnd-kit
+- **Visual itinerary cards** with place details and travel times
+- **Travel mode selection** (Driving, Walking, Transit)
+- **Route visualization** with Google Directions API
+- **Real-time distance and duration** calculations
+- **Export functionality** for planned itineraries
 
-### 🎯 **User Experience**
-- **Fast loading** with optimized fallback chains
-- **Error handling** with graceful degradation
-- **Loading states** with clear feedback
-- **Copy functionality** for addresses, coordinates, and location codes
-- **Mobile-responsive** layout with touch-friendly interactions
-- **Professional UI** with Ceylon-themed color scheme
+### 🚗 **Route Planning & Visualization**
+- **Automatic route calculation** for 2+ destinations
+- **Multiple travel modes** with accurate time estimates
+- **Waypoint optimization** respecting user-defined order
+- **Visual route overlay** on the map
+- **Detailed leg-by-leg breakdown** of the journey
 
-## 🏗️ **Technical Architecture**
+## 🚀 Getting Started
 
-### **Frontend Stack**
-- **React 19.1.0** with Vite for fast development
-- **Google Maps JavaScript API** for interactive mapping
-- **Google Places API** for rich place data
-- **Tailwind CSS 3.4.17** for responsive styling
-- **Lucide React** for consistent iconography
-
-### **Component Structure**
-```
-src/
-├── components/
-│   ├── MapContainer.jsx          # Main map and state management
-│   ├── SidebarFilters.jsx        # Category filtering and search
-│   ├── PlaceDetailsPanel.jsx     # Rich place information display
-│   └── PlaceMarker.jsx          # Custom marker components
-├── data/
-│   └── places.js                # Curated place data with real Google Place IDs
-├── utils/
-│   └── mapsConfig.js            # Google Maps configuration and custom markers
-└── index.css                    # Global styles and animations
-```
-
-### **Key Features Implementation**
-
-#### **Robust Data Loading**
-- **Multi-level fallback system** ensures data is always available
-- **Google Places API** for comprehensive place information
-- **Text search fallback** with multiple query variations
-- **Basic information fallback** for edge cases
-- **Aggressive error handling** prevents loading failures
-
-#### **Smart Filtering Logic**
-- **Memoized filtering** prevents infinite re-renders
-- **Combined search and category filtering**
-- **Dynamic place counting** with real-time updates
-- **No selection = no results** (logical filtering behavior)
-
-#### **Enhanced Place Data Fields**
-```javascript
-// Google Places API Fields Requested
-[
-  // Basic Information
-  'name', 'formatted_address', 'international_phone_number',
-  'website', 'rating', 'user_ratings_total', 'price_level',
-  
-  // Location Details
-  'plus_code', 'geometry', 'vicinity', 'adr_address',
-  
-  // Rich Content
-  'photos', 'reviews', 'types', 'opening_hours',
-  
-  // Services & Amenities
-  'wheelchair_accessible_entrance', 'takeout', 'delivery',
-  'dine_in', 'reservations', 'serves_vegetarian_food',
-  'serves_breakfast', 'serves_lunch', 'serves_dinner',
-  
-  // Additional Details
-  'business_status', 'editorial_summary', 'url'
-]
-```
-
-## 🚀 **Getting Started**
-
-### **Prerequisites**
-- Node.js 18+ and npm
-- Google Cloud Platform account with APIs enabled:
+### Prerequisites
+- Node.js 16+ and npm
+- Google Maps API Key with the following APIs enabled:
   - Maps JavaScript API
   - Places API
-  - (Optional) Extended Component Library
+  - Directions API
 
-### **Installation**
+### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/upeksha/ceylon-trails.git
    cd ceylon-trails
    ```
 
@@ -133,10 +67,11 @@ src/
    npm install
    ```
 
-3. **Set up environment variables**
+3. **Configure environment variables**
    ```bash
-   # Create .env file in the root directory
-   echo "VITE_GOOGLE_MAPS_API_KEY=your_actual_api_key_here" > .env
+   cp .env.example .env
+   # Edit .env and add your Google Maps API key
+   VITE_GOOGLE_MAPS_API_KEY=your_api_key_here
    ```
 
 4. **Start the development server**
@@ -144,121 +79,134 @@ src/
    npm run dev
    ```
 
-5. **Open your browser**
-   Navigate to `http://localhost:5173`
+5. **Open your browser** to `http://localhost:5173`
 
-### **Google Cloud Setup**
+## 🏗️ Architecture
 
-1. **Create a Google Cloud Project**
-2. **Enable required APIs**:
-   - Maps JavaScript API
-   - Places API
-3. **Create API credentials** (API Key)
-4. **Configure API restrictions** (optional but recommended):
-   - HTTP referrer restrictions for production
-   - API restrictions to limit usage
-
-## 📊 **Current Data**
-
-### **Place Categories & Count**
-- 🏛️ **Heritage Sites** (5): Galle Fort, Temple of the Tooth, Sigiriya, Polonnaruwa, Anuradhapura
-- 🍽️ **Restaurants** (2): Ministry of Crab, Curry Leaf Restaurant
-- 🌿 **Eco Lodges** (2): Jetwing Vil Uyana, Heritance Kandalama
-- 🧘 **Wellness** (1): Santani Resort & Spa
-- 🚂 **Train Stations** (3): Kandy, Ella, Nuwara Eliya Railway Stations
-- 🏖️ **Beaches** (4): Unawatuna, Mirissa, Bentota, Arugam Bay
-
-**Total: 17 curated places** across Sri Lanka with real Google Place IDs
-
-### **Data Sources**
-- **Primary**: Google Places API with comprehensive field requests
-- **Fallback**: Google Places Text Search with multiple query variations
-- **Final Fallback**: Curated place descriptions and coordinates
-
-## 🎯 **Development Phases**
-
-### ✅ **Phase 1: Foundation** (Completed)
-- React + Vite setup with Google Maps integration
-- Custom category markers with color coding
-- Basic place details panel with Google Places UI Kit
-- Category-based filtering system
-- Responsive layout design
-
-### ✅ **Phase 2: Enhanced Experience** (Completed)
-- Advanced search functionality with real-time filtering
-- Improved place details with rich Google Places data
-- Itinerary management with add/remove functionality
-- Mobile-responsive design improvements
-- Toast notifications and user feedback
-
-### ✅ **Phase 3: Rich Data & UX** (Completed)
-- Comprehensive place information display
-- Photo galleries and visual content
-- Enhanced contact details with copy-to-clipboard
-- Service badges and amenity indicators
-- Real-time business hours and status
-- Recent reviews and ratings display
-- Multiple data source fallbacks for reliability
-
-### 🚧 **Future Enhancements** (Planned)
-- **Itinerary Planning**: Day-by-day scheduling and route optimization
-- **Offline Support**: Cached place data for poor connectivity
-- **User Accounts**: Save and share itineraries
-- **Enhanced Mobile**: Native-like mobile experience
-- **Social Features**: Reviews, photos, and recommendations
-- **Transportation**: Public transport integration and route planning
-
-## 🛠️ **Development Commands**
-
-```bash
-# Development server
-npm run dev
-
-# Production build
-npm run build
-
-# Preview production build
-npm run preview
-
-# Lint code
-npm run lint
+### **Component Structure**
+```
+src/
+├── components/
+│   ├── MapContainer.jsx          # Main map and state management
+│   ├── SidebarFilters.jsx        # Category and search filtering
+│   ├── PlaceDetailsPanel.jsx     # Rich place information display
+│   ├── ItinerarySidebar.jsx      # Itinerary management UI
+│   ├── ItineraryCard.jsx         # Individual itinerary item
+│   ├── TravelModeSelector.jsx    # Travel mode selection
+│   ├── RouteOverlay.jsx          # Route calculation and display
+│   └── ErrorBoundary.jsx         # Error handling and recovery
+├── data/
+│   ├── places.js                 # Curated Sri Lanka destinations
+│   └── demoItinerary.js          # Sample itinerary data
+└── utils/
+    └── mapsConfig.js             # Google Maps configuration
 ```
 
-## 🐛 **Known Issues & Solutions**
+### **Key Technologies**
+- **React 19.1.0** with Hooks for state management
+- **Vite 6.0.5** for fast development and building
+- **Google Maps JavaScript API** for mapping and geocoding
+- **Google Places API** for rich place data
+- **Google Directions API** for route planning
+- **Tailwind CSS 3.4.17** for styling and responsive design
+- **@dnd-kit** for drag-and-drop functionality
+- **Lucide React** for consistent iconography
 
-### **Map Loading Issues**
-- **Issue**: Map not initializing on some devices
-- **Solution**: Implemented robust DOM element detection with multiple fallbacks
+### **State Management**
+- **Centralized state** in MapContainer for itinerary and route data
+- **Local component state** for UI interactions and loading states
+- **Memoized computations** for performance optimization
+- **Error boundaries** for graceful error handling
 
-### **Place ID Validity**
-- **Issue**: Some Google Place IDs become invalid over time
-- **Solution**: Multi-level fallback system with text search and basic info
+## 🎮 Usage Guide
 
-### **Image Loading**
-- **Issue**: Google Photos API sometimes fails
-- **Solution**: Error handling with retry logic and graceful degradation
+### **Planning an Itinerary**
+1. **Explore the map** and use category filters to find places of interest
+2. **Click on markers** to view detailed place information
+3. **Add places to your itinerary** using the "Add to Itinerary" button
+4. **Reorder stops** by dragging itinerary cards
+5. **Select travel mode** and view automatically calculated routes
+6. **Export your itinerary** when ready
 
-### **Performance**
-- **Issue**: Marker updates causing re-renders
-- **Solution**: Memoized filtering and optimized state management
+### **Search and Filter**
+- Use **category checkboxes** to filter by attraction type
+- **Search by name** in the search box for specific places
+- **Combine filters** for precise results
 
-## 🎨 **Design System**
+### **Route Planning**
+- Routes are **automatically calculated** when you have 2+ destinations
+- **Change travel modes** to see different route options
+- **View detailed route information** including distance and time per segment
 
-### **Ceylon-Themed Colors**
-- `ceylon-orange`: #ea580c (Heritage sites)
-- `ceylon-red`: #dc2626 (Restaurants)
-- `ceylon-green`: #059669 (Eco lodges, success states)
-- `ceylon-purple`: #7c3aed (Wellness)
-- `ceylon-blue`: #1e40af (Transport)
-- `blue-500`: #3b82f6 (Beaches)
+## 🗂️ Data Sources
 
-### **Typography & Spacing**
-- **Font**: System font stack optimized for readability
-- **Spacing**: Consistent 4px grid system
-- **Shadows**: Subtle elevation for depth
-- **Animations**: Smooth transitions and loading states
+### **Curated Destinations**
+The application includes hand-selected destinations across Sri Lanka:
+- **Heritage Sites**: Galle Fort, Temple of the Tooth, Sigiriya Rock Fortress
+- **Restaurants**: Ministry of Crab, Curry Leaf Restaurant
+- **Wellness Retreats**: Jetwing Vil Uyana, Santani Resort & Spa
+- **Train Stations**: Kandy, Ella, Nuwara Eliya
+- **Beaches**: Unawatuna, Mirissa, Bentota, Arugam Bay
 
-## 📝 **Contributing**
+### **Real-time Data Integration**
+- **Google Places API** for current business information
+- **Google Directions API** for accurate travel times
+- **Fallback strategies** ensure data availability
+
+## 🔧 Configuration
+
+### **Environment Variables**
+```env
+VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+```
+
+### **Google Maps API Setup**
+1. Create a project in [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable the following APIs:
+   - Maps JavaScript API
+   - Places API  
+   - Directions API
+3. Create an API key and add it to your `.env` file
+4. Configure API key restrictions for security
+
+## 📱 Mobile Experience
+
+Ceylon Trails is fully responsive with dedicated mobile optimizations:
+- **Touch-friendly** interface with appropriate sizing
+- **Collapsible sidebars** that adapt to screen size
+- **Swipeable itinerary panel** on mobile devices
+- **Optimized map interactions** for touch devices
+
+## 🚧 Development Phases
+
+### ✅ **Phase 1: Foundation** 
+- React.js setup with Vite
+- Google Maps integration
+- Basic marker system with categories
+- Responsive layout foundation
+
+### ✅ **Phase 2: Enhanced Experience**
+- Advanced filtering and search
+- Rich place details panel
+- Google Places API integration
+- Add to itinerary functionality
+
+### ✅ **Phase 3: Itinerary Builder**
+- Complete itinerary management
+- Drag-and-drop reordering
+- Route planning and visualization
+- Export capabilities
+
+### 🔮 **Future Enhancements**
+- User accounts and saved itineraries
+- Social sharing capabilities
+- Offline functionality
+- Advanced route optimization
+- Integration with booking platforms
+
+## 🤝 Contributing
+
+We welcome contributions! Please feel free to submit issues, feature requests, or pull requests.
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -266,17 +214,20 @@ npm run lint
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 **License**
+## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is open source and available under the [MIT License](LICENSE).
 
-## 🙏 **Acknowledgments**
+## 🙏 Acknowledgments
 
-- **Google Maps Platform** for comprehensive mapping and places data
-- **Sri Lanka Tourism** for destination inspiration
-- **React Community** for excellent tooling and documentation
-- **Tailwind CSS** for efficient styling system
+- **Google Maps Platform** for comprehensive mapping APIs
+- **React.js Community** for the excellent framework and ecosystem
+- **Sri Lanka Tourism** for inspiration and destination information
+- **dnd-kit** for the smooth drag-and-drop experience
+- **Tailwind CSS** for the utility-first styling approach
 
 ---
 
-**Built with ❤️ for exploring the pearl of the Indian Ocean** 🇱🇰
+**Built with ❤️ for Sri Lanka travelers by the Ceylon Trails team**
+
+[🌐 View Live Demo](https://ceylon-trails.vercel.app) | [📚 Documentation](https://github.com/upeksha/ceylon-trails/wiki) | [🐛 Report Issues](https://github.com/upeksha/ceylon-trails/issues)
