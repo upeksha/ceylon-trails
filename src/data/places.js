@@ -154,7 +154,9 @@ export const categories = [
   { id: 'eco', name: 'Eco Lodges', color: 'ceylon-green', icon: '🌿' },
   { id: 'wellness', name: 'Wellness', color: 'ceylon-purple', icon: '🧘' },
   { id: 'transport', name: 'Train Stations', color: 'ceylon-blue', icon: '🚂' },
-  { id: 'beach', name: 'Beaches', color: 'blue-500', icon: '🏖️' }
+  { id: 'beach', name: 'Beaches', color: 'blue-500', icon: '🏖️' },
+  { id: 'google', name: 'Google Places', color: 'ceylon-orange', icon: '🔍' },
+  { id: 'custom', name: 'Custom Location', color: 'ceylon-green', icon: '🎯' }
 ];
 
 export const getPlacesByCategory = (categoryId) => {

@@ -1,0 +1,30 @@
+# CORRECTED FIRESTORE SECURITY RULES
+# Copy and paste these rules into Firebase Console → Firestore Database → Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can only access their own itineraries
+    match /itineraries/{itineraryId} {
+      // Allow create for authenticated users where userId matches
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      
+      // Allow read/write for existing documents where userId matches OR if public
+      allow read, write: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || resource.data.public == true);
+    }
+    
+    // Users can only access their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+
+# INSTRUCTIONS:
+# 1. Go to https://console.firebase.google.com/
+# 2. Select your project: backpackers-90876
+# 3. Go to Firestore Database → Rules
+# 4. Replace existing rules with the above
+# 5. Click "Publish"
+# 6. Test itinerary saving in your app 

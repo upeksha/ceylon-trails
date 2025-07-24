@@ -1,26 +1,36 @@
-import { Trash2, GripVertical, MapPin, Clock } from 'lucide-react';
+import { GripVertical, X, MapPin } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { getCategoryInfo } from '../data/places';
 
-const ItineraryCard = ({ place, index, onRemove, travelTime, isFirst, isLast }) => {
+const ItineraryCard = ({ place, index, onRemove, isDragging = false, dragId }) => {
+  console.log('🔍 ItineraryCard: Rendering place:', place);
+  console.log('🔍 ItineraryCard: Place structure:', {
+    id: place?.id,
+    name: place?.name,
+    hasPosition: !!place?.position,
+    position: place?.position,
+    hasDescription: !!place?.description,
+    description: place?.description
+  });
+
+  // Get category info
+  const categoryInfo = getCategoryInfo(place.category);
+
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-    isDragging,
-  } = useSortable({ id: place.id });
+    isDragging: isSortableDragging,
+  } = useSortable({ id: dragId || place.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.6 : 1,
   };
 
-  const categoryInfo = getCategoryInfo(place.category);
-  
   const getCategoryColor = (colorName) => {
     const colorMap = {
       'ceylon-orange': '#ea580c',
@@ -33,130 +43,78 @@ const ItineraryCard = ({ place, index, onRemove, travelTime, isFirst, isLast }) 
     return colorMap[colorName] || '#6b7280';
   };
 
-  const formatTravelTime = (time) => {
-    if (!time) return null;
-    const hours = Math.floor(time / 3600);
-    const minutes = Math.floor((time % 3600) / 60);
-    
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    }
-    return `${minutes}m`;
-  };
+  const isCurrentlyDragging = isDragging || isSortableDragging;
 
   return (
-    <div ref={setNodeRef} style={style}>
-      {/* Travel Time Indicator (between cards) */}
-      {!isFirst && travelTime && (
+    <div
+      ref={setNodeRef}
+      style={{
+        ...style,
+        backgroundColor: isCurrentlyDragging ? '#f3f4f6' : 'white',
+        border: '1px solid #e5e7eb',
+        borderRadius: '12px',
+        padding: '16px',
+        marginBottom: '12px',
+        cursor: isCurrentlyDragging ? 'grabbing' : 'default',
+        opacity: isCurrentlyDragging ? 0.8 : 1,
+        transform: isCurrentlyDragging ? `${CSS.Transform.toString(transform)} rotate(2deg)` : CSS.Transform.toString(transform),
+        transition: 'all 0.2s ease',
+        boxShadow: isCurrentlyDragging ? '0 10px 25px -5px rgba(0, 0, 0, 0.1)' : '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+        {/* Drag Handle */}
+        <div
+          {...attributes}
+          {...listeners}
+          style={{
+            cursor: 'grab',
+            padding: '4px',
+            borderRadius: '4px',
+            color: '#9ca3af',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: '24px',
+            height: '24px'
+          }}
+          onMouseEnter={(e) => e.target.style.color = '#6b7280'}
+          onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+        >
+          <GripVertical style={{ width: '16px', height: '16px' }} />
+        </div>
+
+        {/* Index Badge */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '8px 0',
-          gap: '8px'
+          width: '24px',
+          height: '24px',
+          backgroundColor: '#1e40af',
+          color: 'white',
+          borderRadius: '50%',
+          fontSize: '12px',
+          fontWeight: '600',
+          flexShrink: 0
         }}>
-          <div style={{
-            flex: 1,
-            height: '2px',
-            background: 'linear-gradient(to right, #e5e7eb, #059669, #e5e7eb)'
-          }} />
-          <div style={{
-            backgroundColor: '#f0fdf4',
-            border: '1px solid #059669',
-            borderRadius: '12px',
-            padding: '4px 8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}>
-            <Clock style={{ width: '12px', height: '12px', color: '#059669' }} />
-            <span style={{ fontSize: '11px', fontWeight: '500', color: '#059669' }}>
-              {formatTravelTime(travelTime)}
-            </span>
-          </div>
-          <div style={{
-            flex: 1,
-            height: '2px',
-            background: 'linear-gradient(to right, #e5e7eb, #059669, #e5e7eb)'
-          }} />
+          {index + 1}
         </div>
-      )}
 
-      {/* Itinerary Card */}
-      <div style={{
-        backgroundColor: 'white',
-        border: '2px solid #e5e7eb',
-        borderRadius: '12px',
-        padding: '16px',
-        marginBottom: '12px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-        transition: 'all 0.2s',
-        cursor: isDragging ? 'grabbing' : 'default',
-        borderColor: isDragging ? '#059669' : '#e5e7eb'
-      }}>
-        {/* Card Header */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '12px',
-          marginBottom: '12px'
-        }}>
-          {/* Drag Handle */}
-          <button
-            {...attributes}
-            {...listeners}
-            style={{
-              cursor: 'grab',
-              padding: '4px',
-              border: 'none',
-              backgroundColor: 'transparent',
-              color: '#9ca3af',
-              borderRadius: '4px',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = '#f3f4f6';
-              e.target.style.color = '#6b7280';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = 'transparent';
-              e.target.style.color = '#9ca3af';
-            }}
-          >
-            <GripVertical style={{ width: '16px', height: '16px' }} />
-          </button>
-
-          {/* Stop Number */}
-          <div style={{
-            minWidth: '28px',
-            height: '28px',
-            backgroundColor: getCategoryColor(categoryInfo?.color),
-            color: 'white',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '12px',
-            fontWeight: '700',
-            marginTop: '2px'
-          }}>
-            {index + 1}
-          </div>
-
-          {/* Place Info */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            {/* Category Badge */}
+        {/* Place Info */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Category Badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
             <div style={{
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
               gap: '6px',
+              padding: '4px 8px',
               backgroundColor: `${getCategoryColor(categoryInfo?.color)}15`,
-              border: `1px solid ${getCategoryColor(categoryInfo?.color)}30`,
               borderRadius: '12px',
-              padding: '2px 8px',
-              marginBottom: '8px'
+              border: `1px solid ${getCategoryColor(categoryInfo?.color)}30`
             }}>
-              <span style={{ fontSize: '12px' }}>{categoryInfo?.icon}</span>
+              <span style={{ fontSize: '14px' }}>{categoryInfo?.icon}</span>
               <span style={{
                 fontSize: '11px',
                 fontWeight: '600',
@@ -165,88 +123,66 @@ const ItineraryCard = ({ place, index, onRemove, travelTime, isFirst, isLast }) 
                 {categoryInfo?.name}
               </span>
             </div>
-
-            {/* Place Name */}
-            <h4 style={{
-              fontSize: '15px',
-              fontWeight: '600',
-              color: '#1f2937',
-              marginBottom: '6px',
-              lineHeight: '1.3',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
-              {place.name}
-            </h4>
-
-            {/* Location Info */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              marginBottom: '8px'
-            }}>
-              <MapPin style={{ 
-                width: '12px', 
-                height: '12px', 
-                color: '#6b7280',
-                flexShrink: 0
-              }} />
-              <span style={{
-                fontSize: '12px',
-                color: '#6b7280',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
-              }}>
-                {place.position.lat.toFixed(4)}, {place.position.lng.toFixed(4)}
-              </span>
-            </div>
-
-            {/* Description */}
-            {place.description && (
-              <p style={{
-                fontSize: '12px',
-                color: '#4b5563',
-                lineHeight: '1.4',
-                margin: 0,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical'
-              }}>
-                {place.description}
-              </p>
-            )}
           </div>
 
-          {/* Remove Button */}
-          <button
-            onClick={() => onRemove(place.id)}
-            style={{
-              padding: '6px',
-              border: 'none',
-              backgroundColor: 'transparent',
-              color: '#9ca3af',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              marginTop: '2px'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = '#fef2f2';
-              e.target.style.color = '#dc2626';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = 'transparent';
-              e.target.style.color = '#9ca3af';
-            }}
-          >
-            <Trash2 style={{ width: '14px', height: '14px' }} />
-          </button>
+          {/* Place Name */}
+          <h4 style={{
+            fontSize: '16px',
+            fontWeight: '600',
+            color: '#1f2937',
+            marginBottom: '6px',
+            lineHeight: '1.3'
+          }}>
+            {place.name}
+          </h4>
+
+          {/* Address/Description */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+            <MapPin style={{ width: '14px', height: '14px', color: '#6b7280', marginTop: '2px', flexShrink: 0 }} />
+            <p style={{
+              fontSize: '13px',
+              color: '#6b7280',
+              lineHeight: '1.4',
+              margin: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical'
+            }}>
+              {place.description || (place.position ? `${place.position.lat.toFixed(4)}, ${place.position.lng.toFixed(4)}` : 'Location not available')}
+            </p>
+          </div>
         </div>
+
+        {/* Remove Button */}
+        <button
+          onClick={() => onRemove(place.id)}
+          style={{
+            padding: '6px',
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            color: '#dc2626',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.2s',
+            flexShrink: 0
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#fee2e2';
+            e.target.style.borderColor = '#fca5a5';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#fef2f2';
+            e.target.style.borderColor = '#fecaca';
+          }}
+          title="Remove from itinerary"
+        >
+          <X style={{ width: '14px', height: '14px' }} />
+        </button>
       </div>
     </div>
   );

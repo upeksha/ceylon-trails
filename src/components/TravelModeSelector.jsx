@@ -1,181 +1,94 @@
-import { Car, User, Bus } from 'lucide-react';
-import { useState } from 'react';
+import { Car, User, Train } from 'lucide-react';
 
-const TravelModeSelector = ({ travelMode, onTravelModeChange, showLabel = true }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const travelModes = [
+const TravelModeSelector = ({ travelMode, onTravelModeChange }) => {
+  const modes = [
     {
-      id: 'DRIVING',
-      name: 'Driving',
+      value: 'DRIVING',
+      label: 'Driving',
       icon: Car,
-      color: '#1e40af',
-      description: 'By car or vehicle'
+      color: '#059669'
     },
     {
-      id: 'WALKING',
-      name: 'Walking',
+      value: 'WALKING',
+      label: 'Walking',
       icon: User,
-      color: '#059669',
-      description: 'On foot'
+      color: '#1e40af'
     },
     {
-      id: 'TRANSIT',
-      name: 'Transit',
-      icon: Bus,
-      color: '#7c3aed',
-      description: 'Public transport'
+      value: 'TRANSIT',
+      label: 'Transit',
+      icon: Train,
+      color: '#7c3aed'
     }
   ];
 
-  const currentMode = travelModes.find(mode => mode.id === travelMode) || travelModes[0];
-
-  const handleModeSelect = (mode) => {
-    onTravelModeChange(mode.id);
-    setIsOpen(false);
-  };
-
   return (
-    <div style={{ position: 'relative', width: '100%' }}>
-      {showLabel && (
-        <label style={{
-          display: 'block',
-          fontSize: '14px',
-          fontWeight: '600',
-          color: '#374151',
-          marginBottom: '8px'
-        }}>
-          🚗 Travel Mode
-        </label>
-      )}
+    <div style={{
+      backgroundColor: 'white',
+      border: '1px solid #e5e7eb',
+      borderRadius: '12px',
+      padding: '16px',
+      marginBottom: '16px'
+    }}>
+      <h3 style={{
+        fontSize: '16px',
+        fontWeight: '600',
+        color: '#374151',
+        marginBottom: '12px'
+      }}>
+        Travel Mode
+      </h3>
       
-      {/* Selected Mode Display */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 16px',
-          backgroundColor: 'white',
-          border: '2px solid #e5e7eb',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-          boxShadow: isOpen ? '0 0 0 3px rgba(59, 130, 246, 0.1)' : 'none',
-          borderColor: isOpen ? '#3b82f6' : '#e5e7eb'
-        }}
-        onMouseEnter={(e) => {
-          if (!isOpen) e.target.style.borderColor = '#d1d5db';
-        }}
-        onMouseLeave={(e) => {
-          if (!isOpen) e.target.style.borderColor = '#e5e7eb';
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <currentMode.icon 
-            style={{ 
-              width: '20px', 
-              height: '20px', 
-              color: currentMode.color 
-            }} 
-          />
-          <div style={{ textAlign: 'left' }}>
-            <div style={{ fontSize: '14px', fontWeight: '500', color: '#1f2937' }}>
-              {currentMode.name}
-            </div>
-            <div style={{ fontSize: '12px', color: '#6b7280' }}>
-              {currentMode.description}
-            </div>
-          </div>
-        </div>
-        <div style={{
-          fontSize: '12px',
-          color: '#9ca3af',
-          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-          transition: 'transform 0.2s'
-        }}>
-          ▼
-        </div>
-      </button>
-
-      {/* Dropdown Menu */}
-      {isOpen && (
-        <div style={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          right: 0,
-          backgroundColor: 'white',
-          border: '2px solid #e5e7eb',
-          borderRadius: '8px',
-          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-          zIndex: 1000,
-          marginTop: '4px'
-        }}>
-          {travelModes.map((mode) => (
+      <div style={{
+        display: 'flex',
+        gap: '8px'
+      }}>
+        {modes.map((mode) => {
+          const IconComponent = mode.icon;
+          const isActive = travelMode === mode.value;
+          
+          return (
             <button
-              key={mode.id}
-              onClick={() => handleModeSelect(mode)}
+              key={mode.value}
+              onClick={() => onTravelModeChange(mode.value)}
               style={{
-                width: '100%',
+                flex: 1,
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                gap: '12px',
-                padding: '12px 16px',
-                backgroundColor: mode.id === travelMode ? '#f3f4f6' : 'transparent',
-                border: 'none',
+                gap: '6px',
+                padding: '12px 8px',
+                backgroundColor: isActive ? `${mode.color}15` : '#f9fafb',
+                border: `2px solid ${isActive ? mode.color : '#e5e7eb'}`,
+                borderRadius: '8px',
                 cursor: 'pointer',
-                transition: 'background-color 0.2s',
-                borderBottom: mode.id !== travelModes[travelModes.length - 1].id ? '1px solid #f3f4f6' : 'none'
+                transition: 'all 0.2s ease',
+                color: isActive ? mode.color : '#6b7280'
               }}
               onMouseEnter={(e) => {
-                if (mode.id !== travelMode) {
-                  e.target.style.backgroundColor = '#f9fafb';
+                if (!isActive) {
+                  e.target.style.backgroundColor = '#f3f4f6';
+                  e.target.style.borderColor = '#d1d5db';
                 }
               }}
               onMouseLeave={(e) => {
-                if (mode.id !== travelMode) {
-                  e.target.style.backgroundColor = 'transparent';
+                if (!isActive) {
+                  e.target.style.backgroundColor = '#f9fafb';
+                  e.target.style.borderColor = '#e5e7eb';
                 }
               }}
             >
-              <mode.icon 
-                style={{ 
-                  width: '18px', 
-                  height: '18px', 
-                  color: mode.color 
-                }} 
-              />
-              <div style={{ textAlign: 'left' }}>
-                <div style={{ 
-                  fontSize: '14px', 
-                  fontWeight: '500', 
-                  color: '#1f2937' 
-                }}>
-                  {mode.name}
-                </div>
-                <div style={{ 
-                  fontSize: '12px', 
-                  color: '#6b7280' 
-                }}>
-                  {mode.description}
-                </div>
-              </div>
-              {mode.id === travelMode && (
-                <div style={{ 
-                  marginLeft: 'auto',
-                  color: '#059669',
-                  fontSize: '16px'
-                }}>
-                  ✓
-                </div>
-              )}
+              <IconComponent style={{ width: '20px', height: '20px' }} />
+              <span style={{
+                fontSize: '12px',
+                fontWeight: isActive ? '600' : '500'
+              }}>
+                {mode.label}
+              </span>
             </button>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 };

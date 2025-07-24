@@ -5,19 +5,34 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ceylon Trails - Sri Lanka Travel Planner</title>
-    <!-- Google Maps API with Extended Component Library -->
+    <!-- Google Maps API with Places API -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhwSeXN84puwKvKrg6bbW-c4h6JWAFb9Q&libraries=places,marker&loading=async&callback=initMap"></script>
     <script>
       // Initialize callback function
       window.initMap = function() {
-        // Import and define Extended Component Library
-        import('https://unpkg.com/@googlemaps/extended-component-library@^0.6').then(() => {
-          console.log('Extended Component Library loaded successfully');
-          window.extendedComponentsReady = true;
-        }).catch(error => {
-          console.error('Failed to load Extended Component Library:', error);
-          window.extendedComponentsError = error;
-        });
+        console.log('Google Maps API loaded successfully');
+        
+        // Test if Places API is working
+        if (window.google && window.google.maps && window.google.maps.places) {
+          console.log('✅ Google Maps Places API is available');
+          
+          // Test with a simple place search
+          const service = new google.maps.places.PlacesService(document.createElement('div'));
+          const request = {
+            query: 'McDonald\'s',
+            fields: ['place_id', 'name']
+          };
+          
+          service.textSearch(request, (results, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+              console.log('✅ Places API is working, found:', results[0]?.name);
+            } else {
+              console.log('❌ Places API error:', status);
+            }
+          });
+        } else {
+          console.log('❌ Google Maps Places API not available');
+        }
       };
     </script>
   </head>

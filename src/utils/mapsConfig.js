@@ -29,20 +29,49 @@ export const createCustomMarker = (map, position, category, onClick) => {
     eco: '#059669',
     wellness: '#7c3aed',
     transport: '#1e40af',
-    beach: '#3b82f6'
+    beach: '#3b82f6',
+    google: '#ea580c', // Same as heritage for Google Places
+    custom: '#059669' // Green for custom places
   };
 
-  const marker = new google.maps.Marker({
-    position,
-    map,
-    icon: {
+  let icon;
+  if (category === 'google') {
+    // Use a pin SVG path for Google Places
+    icon = {
+      path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
+      fillColor: '#ea580c',
+      fillOpacity: 1,
+      strokeColor: '#fff',
+      strokeWeight: 2,
+      scale: 2,
+      anchor: new google.maps.Point(12, 22)
+    };
+  } else if (category === 'custom') {
+    // Use a green pin SVG path for Custom Places
+    icon = {
+      path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
+      fillColor: '#059669',
+      fillOpacity: 1,
+      strokeColor: '#fff',
+      strokeWeight: 2,
+      scale: 2,
+      anchor: new google.maps.Point(12, 22)
+    };
+  } else {
+    icon = {
       path: google.maps.SymbolPath.CIRCLE,
       scale: 12,
       fillColor: categoryColors[category] || '#6b7280',
       fillOpacity: 0.8,
       strokeColor: '#ffffff',
       strokeWeight: 2
-    },
+    };
+  }
+
+  const marker = new google.maps.Marker({
+    position,
+    map,
+    icon,
     title: 'Click for details'
   });
 

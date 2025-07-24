@@ -1,13 +1,25 @@
-import { useState } from 'react';
-import { Search, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 import { categories } from '../data/places';
+import '../styles/SidebarFilters.css';
 
-const SidebarFilters = ({ selectedCategories, onCategoryChange, searchQuery, onSearchChange, filteredPlaces, totalPlaces, isMobile = false }) => {
+const SidebarFilters = ({ 
+  selectedCategories, 
+  onCategoryChange, 
+  searchQuery, 
+  onSearchChange, 
+  filteredPlaces, 
+  totalPlaces,
+  onGooglePlacesSearch 
+}) => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleCategoryToggle = (categoryId) => {
-    const isCurrentlySelected = selectedCategories.includes(categoryId);
-    onCategoryChange(categoryId, !isCurrentlySelected);
+    const newSelection = selectedCategories.includes(categoryId)
+      ? selectedCategories.filter(id => id !== categoryId)
+      : [...selectedCategories, categoryId];
+    onCategoryChange(newSelection);
   };
 
   const clearSearch = () => {
@@ -16,283 +28,178 @@ const SidebarFilters = ({ selectedCategories, onCategoryChange, searchQuery, onS
 
   const clearAllFilters = () => {
     onSearchChange('');
-    // Clear all categories by deselecting each one
-    selectedCategories.forEach(categoryId => {
-      onCategoryChange(categoryId, false);
-    });
+    onCategoryChange([]);
   };
 
   const hasActiveFilters = searchQuery || selectedCategories.length > 0;
   const showingAllCategories = selectedCategories.length === 0;
 
-  // Mobile sidebar is hidden by default
-  if (isMobile) {
-    return null; // For now, we'll implement mobile filters later
-  }
+  // Toggle button component
+  const ToggleButton = () => (
+    <button
+      onClick={() => setIsCollapsed(!isCollapsed)}
+      className={`toggle-button ${isCollapsed ? 'collapsed' : ''}`}
+      title={isCollapsed ? 'Show filters' : 'Hide filters'}
+    >
+      {isCollapsed ? (
+        <ChevronRight size={18} style={{ marginLeft: '1px' }} />
+      ) : (
+        <ChevronLeft size={18} style={{ marginRight: '1px' }} />
+      )}
+    </button>
+  );
 
   return (
-    <div style={{
-      width: '320px',
-      backgroundColor: 'white',
-      height: '100vh',
-      borderRight: '1px solid #e5e7eb',
-      display: 'flex',
-      flexDirection: 'column',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      {/* Header */}
-      <div style={{
-        padding: '24px',
-        borderBottom: '1px solid #e5e7eb'
-      }}>
-        <h1 style={{
-          fontSize: '24px',
-          fontWeight: 'bold',
-          color: '#1f2937',
-          marginBottom: '4px'
-        }}>
-          Ceylon Trails
-        </h1>
-        <p style={{
-          fontSize: '14px',
-          color: '#6b7280',
-          marginBottom: '20px'
-        }}>
-          Discover Sri Lanka's hidden gems
-        </p>
+    <div className={`sidebar-container ${isCollapsed ? 'collapsed' : ''}`}>
+      {/* Toggle Button - Always visible */}
+      <ToggleButton />
 
-        {/* Search Box */}
-        <div style={{
-          position: 'relative',
-          marginBottom: '20px'
-        }}>
-          <div style={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            border: `2px solid ${isSearchFocused ? '#059669' : '#e5e7eb'}`,
-            borderRadius: '8px',
-            transition: 'border-color 0.2s'
-          }}>
-            <Search style={{
-              position: 'absolute',
-              left: '12px',
-              width: '16px',
-              height: '16px',
-              color: '#9ca3af'
-            }} />
-            <input
-              type="text"
-              placeholder="Search places..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setIsSearchFocused(false)}
-              style={{
-                width: '100%',
-                padding: '12px 40px 12px 40px',
-                border: 'none',
-                outline: 'none',
-                fontSize: '14px',
-                backgroundColor: 'transparent',
-                color: '#1f2937'
-              }}
-            />
-            {searchQuery && (
+      {/* Sidebar Content - hidden when collapsed */}
+      <div className={`sidebar-content ${isCollapsed ? 'collapsed' : ''}`}>
+        {/* Header */}
+        <div className="sidebar-header">
+          <h1 className="sidebar-title">
+            Ceylon Trails
+          </h1>
+          <p className="sidebar-subtitle">
+            Discover Sri Lanka's treasures
+          </p>
+        </div>
+
+        {/* Search Section */}
+        <div className="search-section">
+          <div className="search-container">
+            <div className="search-input-container">
+              <Search className={`search-icon ${isSearchFocused ? 'focused' : ''}`} />
+              <input
+                type="text"
+                placeholder="Search places..."
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
+                className="search-input"
+              />
+              {searchQuery && (
+                <button
+                  onClick={clearSearch}
+                  className="clear-search-btn"
+                >
+                  <X className="clear-search-icon" />
+                </button>
+              )}
+            </div>
+            <button
+              className="google-places-search-btn"
+              onClick={onGooglePlacesSearch}
+              title="Search Google Places"
+            >
+              <Search size={16} />
+            </button>
+          </div>
+          <div className="search-results-info">
+            Showing {filteredPlaces.length} of {totalPlaces} places
+          </div>
+        </div>
+
+        {/* Results Summary */}
+        <div className="results-summary">
+          <div className="results-container">
+            <span className="results-text">
+              {filteredPlaces.length} of {totalPlaces} places
+              {searchQuery && (
+                <span className="results-query">
+                  {' '}for "{searchQuery}"
+                </span>
+              )}
+            </span>
+            {hasActiveFilters && (
               <button
-                onClick={clearSearch}
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  padding: '2px',
-                  border: 'none',
-                  backgroundColor: 'transparent',
-                  cursor: 'pointer',
-                  color: '#9ca3af'
-                }}
+                onClick={clearAllFilters}
+                className="clear-all-btn"
               >
-                <X style={{ width: '14px', height: '14px' }} />
+                Clear all
               </button>
             )}
           </div>
         </div>
 
-        {/* Results Summary */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '20px'
-        }}>
-          <span style={{
-            fontSize: '14px',
-            color: '#4b5563',
-            fontWeight: '500'
-          }}>
-            {filteredPlaces?.length || 0} of {totalPlaces} places
-          </span>
-          {hasActiveFilters && (
-            <button
-              onClick={clearAllFilters}
-              style={{
-                fontSize: '12px',
-                color: '#059669',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontWeight: '500',
-                textDecoration: 'underline'
-              }}
-            >
-              Clear all
-            </button>
-          )}
-        </div>
-      </div>
+        {/* Categories */}
+        <div className="categories-section">
+          <h3 className="categories-title">
+            Categories
+          </h3>
+          
+          <div className="categories-list">
+            {categories.map((category) => {
+              const isSelected = selectedCategories.includes(category.id);
+              const categoryPlaces = filteredPlaces.filter(place => place.category === category.id);
+              const categoryCount = categoryPlaces.length;
+              
+              const getCategoryColor = (colorName) => {
+                const colorMap = {
+                  'ceylon-orange': '#ea580c',
+                  'ceylon-red': '#dc2626',
+                  'ceylon-green': '#059669',
+                  'ceylon-purple': '#7c3aed',
+                  'ceylon-blue': '#1e40af',
+                  'blue-500': '#3b82f6'
+                };
+                return colorMap[colorName] || '#6b7280';
+              };
 
-      {/* Category Filters */}
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        padding: '0 24px 24px 24px'
-      }}>
-        <h3 style={{
-          fontSize: '16px',
-          fontWeight: '600',
-          color: '#1f2937',
-          marginBottom: '16px'
-        }}>
-          Categories
-        </h3>
-
-        {/* Show notice when no categories selected */}
-        {showingAllCategories && (
-          <div style={{
-            backgroundColor: '#fef3c7',
-            border: '1px solid #f59e0b',
-            borderRadius: '8px',
-            padding: '12px',
-            marginBottom: '16px'
-          }}>
-            <p style={{
-              fontSize: '12px',
-              color: '#92400e',
-              margin: 0
-            }}>
-              No categories selected. Select categories to see places.
-            </p>
+              return (
+                <label
+                  key={category.id}
+                  className={`category-item ${isSelected ? `selected ${category.color}` : ''} ${searchQuery && categoryCount === 0 ? 'disabled' : ''}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => handleCategoryToggle(category.id)}
+                    className="category-checkbox"
+                    style={{ accentColor: getCategoryColor(category.color) }}
+                  />
+                  <div className="category-content">
+                    <span className="category-icon">
+                      {category.icon}
+                    </span>
+                    <div className="category-details">
+                      <div className={`category-name ${isSelected ? `selected ${category.color}` : ''}`}>
+                        {category.name}
+                      </div>
+                      <div className="category-count">
+                        {categoryCount} place{categoryCount !== 1 ? 's' : ''}
+                        {searchQuery && categoryCount === 0 && ' (no matches)'}
+                      </div>
+                    </div>
+                  </div>
+                </label>
+              );
+            })}
           </div>
-        )}
-
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px'
-        }}>
-          {categories.map(category => {
-            const isSelected = selectedCategories.includes(category.id);
-            const categoryPlaces = filteredPlaces?.filter(place => place.category === category.id) || [];
-            
-            return (
-              <label
-                key={category.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  cursor: 'pointer',
-                  padding: '8px',
-                  borderRadius: '6px',
-                  backgroundColor: isSelected ? '#f0fdf4' : 'transparent',
-                  border: isSelected ? '1px solid #059669' : '1px solid transparent',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isSelected) {
-                    e.target.style.backgroundColor = '#f9fafb';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isSelected) {
-                    e.target.style.backgroundColor = 'transparent';
-                  }
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => handleCategoryToggle(category.id)}
-                  style={{
-                    width: '16px',
-                    height: '16px',
-                    accentColor: '#059669'
-                  }}
-                />
-                <span style={{ fontSize: '18px' }}>{category.icon}</span>
-                <div style={{ flex: 1 }}>
-                  <div style={{
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    color: isSelected ? '#059669' : '#1f2937'
-                  }}>
-                    {category.name}
-                  </div>
-                  <div style={{
-                    fontSize: '12px',
-                    color: '#6b7280'
-                  }}>
-                    {categoryPlaces.length} {categoryPlaces.length === 1 ? 'place' : 'places'}
-                  </div>
-                </div>
-              </label>
-            );
-          })}
         </div>
 
-        {/* No results message */}
-        {hasActiveFilters && (!filteredPlaces || filteredPlaces.length === 0) && (
-          <div style={{
-            textAlign: 'center',
-            padding: '40px 20px',
-            marginTop: '20px'
-          }}>
-            <div style={{
-              fontSize: '48px',
-              marginBottom: '16px'
-            }}>🔍</div>
-            <h3 style={{
-              fontSize: '16px',
-              fontWeight: '600',
-              color: '#1f2937',
-              marginBottom: '8px'
-            }}>
+        {/* No Results Message */}
+        {filteredPlaces.length === 0 && hasActiveFilters && (
+          <div className="no-results">
+            <div className="no-results-title">
               No places found
-            </h3>
-            <p style={{
-              fontSize: '14px',
-              color: '#6b7280',
-              lineHeight: '1.5',
-              marginBottom: '16px'
-            }}>
-              Try adjusting your search terms or selecting different categories.
-            </p>
+            </div>
+            <div className="no-results-text">
+              Try adjusting your search or category filters
+            </div>
             <button
               onClick={clearAllFilters}
-              style={{
-                backgroundColor: '#059669',
-                color: 'white',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}
+              className="clear-filters-btn"
             >
-              Clear filters
+              Clear Filters
             </button>
           </div>
         )}
+
+        {/* Mobile bottom padding */}
+        <div className="mobile-padding" />
       </div>
     </div>
   );
