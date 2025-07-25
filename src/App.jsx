@@ -15,6 +15,7 @@ import './styles/App.css';
 import ProtectedAdminRoute from './admin/ProtectedAdminRoute';
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
+import AdminPlaces from './admin/AdminPlaces';
 
 // Main App Component with Auth and Itinerary Contexts
 const AppContent = () => {
@@ -102,8 +103,8 @@ const AppContent = () => {
             }
           >
             <Route index element={<AdminDashboard />} />
+            <Route path="places" element={<AdminPlaces />} />
             {/* Future admin routes will go here */}
-            {/* <Route path="places" element={<AdminPlaces />} /> */}
             {/* <Route path="users" element={<AdminUsers />} /> */}
             {/* <Route path="itineraries" element={<AdminItineraries />} /> */}
           </Route>

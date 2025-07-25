@@ -4,19 +4,39 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
     // Users can only access their own itineraries
     match /itineraries/{itineraryId} {
       // Allow create for authenticated users where userId matches
       allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
       
-      // Allow read/write for existing documents where userId matches OR if public
+      // Allow read/write for existing documents where userId matches OR if public OR if admin
       allow read, write: if request.auth != null && 
-        (resource.data.userId == request.auth.uid || resource.data.public == true);
+        (resource.data.userId == request.auth.uid || 
+         resource.data.public == true || 
+         isAdmin());
     }
     
     // Users can only access their own profile
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Admin places collection - only admins can access
+    match /admin_places/{placeId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Admin can read all user profiles for management
+    match /users/{userId} {
+      allow read: if isAdmin();
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }
@@ -27,4 +47,4 @@ service cloud.firestore {
 # 3. Go to Firestore Database → Rules
 # 4. Replace existing rules with the above
 # 5. Click "Publish"
-# 6. Test itinerary saving in your app 
+# 6. Test admin functionality in your app 
