@@ -8,7 +8,8 @@ import {
   signInWithPopup,
   updateProfile
 } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../config/firebase';
 import { createUserProfile } from '../services/firebaseService';
 
 // Create the auth context
@@ -26,6 +27,7 @@ export const useAuth = () => {
 // Auth Provider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null); // Firestore user document
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [firebaseAvailable, setFirebaseAvailable] = useState(false);
@@ -41,6 +43,27 @@ export const AuthProvider = ({ children }) => {
       console.warn('⚠️ AuthProvider: Firebase Auth is not available - authentication disabled');
     }
   }, []);
+
+  // Fetch user data from Firestore
+  const fetchUserData = async (uid) => {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        console.log('✅ AuthProvider: Fetched user data from Firestore:', data);
+        setUserData(data);
+        return data;
+      } else {
+        console.warn('⚠️ AuthProvider: No user document found in Firestore for UID:', uid);
+        setUserData(null);
+        return null;
+      }
+    } catch (error) {
+      console.error('❌ AuthProvider: Error fetching user data:', error);
+      setUserData(null);
+      return null;
+    }
+  };
 
   // Register user with email and password
   const register = async (email, password, displayName = null) => {
@@ -243,13 +266,15 @@ export const AuthProvider = ({ children }) => {
 
     console.log('🔄 AuthProvider: Setting up auth state listener');
     
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       console.log('🔄 AuthProvider: Auth state changed:', currentUser ? currentUser.uid : 'No user');
       
       setUser(currentUser);
       setLoading(false);
       
       if (currentUser) {
+        // Fetch user data from Firestore
+        await fetchUserData(currentUser.uid);
         console.log('✅ AuthProvider: User authenticated:', {
           uid: currentUser.uid,
           email: currentUser.email,
@@ -270,6 +295,7 @@ export const AuthProvider = ({ children }) => {
   // Context value
   const value = {
     user,
+    userData, // Add userData to context value
     loading,
     error,
     firebaseAvailable,

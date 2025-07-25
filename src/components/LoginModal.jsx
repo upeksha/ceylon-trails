@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const LoginModal = ({ isOpen, onClose, onSuccess }) => {
-  const { login, register, loginWithGoogle, error, clearError, firebaseAvailable } = useAuth();
+  const { login, register, loginWithGoogle, error, clearError, firebaseAvailable, userData } = useAuth();
+  const navigate = useNavigate();
   
   const [isRegistering, setIsRegistering] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,6 +19,24 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [localError, setLocalError] = useState('');
   const [localSuccess, setLocalSuccess] = useState('');
+
+  // Handle successful login with role-based redirect
+  const handleSuccessfulLogin = (user) => {
+    setLocalSuccess('Logged in successfully!');
+    
+    // Wait a moment for userData to be fetched, then redirect
+    setTimeout(() => {
+      if (userData && userData.role === 'admin') {
+        console.log('✅ LoginModal: User is admin, redirecting to admin panel');
+        navigate('/admin');
+      } else {
+        console.log('✅ LoginModal: User is regular user, staying on main app');
+        // Stay on main app for regular users
+      }
+      onSuccess && onSuccess(user);
+      onClose();
+    }, 1500);
+  };
 
   // Clear errors when modal opens/closes
   useEffect(() => {
@@ -101,11 +121,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
       }
 
       if (result.success) {
-        setLocalSuccess(isRegistering ? 'Account created successfully!' : 'Logged in successfully!');
-        setTimeout(() => {
-          onSuccess && onSuccess(result.user);
-          onClose();
-        }, 1500);
+        handleSuccessfulLogin(result.user);
       } else {
         setLocalError(result.error);
       }
@@ -126,11 +142,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
       const result = await loginWithGoogle();
       
       if (result.success) {
-        setLocalSuccess('Logged in with Google successfully!');
-        setTimeout(() => {
-          onSuccess && onSuccess(result.user);
-          onClose();
-        }, 1500);
+        handleSuccessfulLogin(result.user);
       } else {
         setLocalError(result.error);
       }

@@ -11,6 +11,11 @@ import { useAuth } from './contexts/AuthProvider';
 import { useItinerary } from './contexts/ItineraryContext';
 import './styles/App.css';
 
+// Admin components
+import ProtectedAdminRoute from './admin/ProtectedAdminRoute';
+import AdminLayout from './admin/AdminLayout';
+import AdminDashboard from './admin/AdminDashboard';
+
 // Main App Component with Auth and Itinerary Contexts
 const AppContent = () => {
   const { user, logout } = useAuth();
@@ -86,6 +91,22 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<MapContainer />} />
           <Route path="/itinerary/:id" element={<PublicItineraryPage />} />
+          
+          {/* Admin Routes */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedAdminRoute>
+                <AdminLayout />
+              </ProtectedAdminRoute>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            {/* Future admin routes will go here */}
+            {/* <Route path="places" element={<AdminPlaces />} /> */}
+            {/* <Route path="users" element={<AdminUsers />} /> */}
+            {/* <Route path="itineraries" element={<AdminItineraries />} /> */}
+          </Route>
         </Routes>
       </div>
 
@@ -107,16 +128,16 @@ const AppContent = () => {
   );
 };
 
-// Root App Component with Providers
+// Main App Component
 const App = () => {
   return (
-    <Router>
-      <AuthProvider>
-        <ItineraryProvider>
+    <AuthProvider>
+      <ItineraryProvider>
+        <Router>
           <AppContent />
-        </ItineraryProvider>
-      </AuthProvider>
-    </Router>
+        </Router>
+      </ItineraryProvider>
+    </AuthProvider>
   );
 };
 
